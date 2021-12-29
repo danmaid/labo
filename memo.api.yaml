@@ -1,0 +1,73 @@
+openapi: '3.0.2'
+info:
+  title: memo api
+  version: '1.0'
+servers:
+  - url: https://api.danmaid.com/v1
+paths:
+  /memos:
+    get:
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                    - properties:
+                        id:
+                          type: string
+                    - $ref: '#/components/schemas/Memo'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Memo'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: Generated ID
+                type: string
+  /memos/{id}:
+    get:
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Memo'
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Memo'
+      responses:
+        200:
+          description: OK
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Memo'
+      responses:
+        200:
+          description: OK
+    delete:
+      responses:
+        200:
+          description: OK
+components:
+  schemas:
+    Memo:
+      title: Memo
+      type: object
+      additionalProperties: true
