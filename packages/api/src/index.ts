@@ -1,10 +1,12 @@
-import express from 'express'
-import { initialize } from 'express-openapi'
+import { DynamoDB, CreateTableCommand } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
 
-const app = express()
-initialize({
-  app,
-  apiDoc: './src-api-stub/memo.api.yaml',
-})
+const ddb = DynamoDBDocument.from(new DynamoDB({}))
 
-app.listen(3000)
+export async function handler(event?: any): Promise<any> {
+  const { Item } = await ddb.get({ TableName: 'files', Key: { id: '1' } })
+  const {Items} = await ddb.scan({ TableName: 'files' })
+  const {} = await ddb.delete({TableName: 'files', Key: { id: }})
+  ddb.update({})
+  return Item
+}
