@@ -1,0 +1,28 @@
+{
+  "name": "api-node",
+  "version": "0.0.1",
+  "description": "danmaid API node.js implementation.",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/ws": "^8.2.2",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "ts-node-dev --respawn src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danmaid/labo.git"
+  },
+  "author": "danmaid",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danmaid/labo/issues"
+  },
+  "homepage": "https://github.com/danmaid/labo#readme",
+  "dependencies": {
+    "ws": "^8.4.0"
+  }
+}

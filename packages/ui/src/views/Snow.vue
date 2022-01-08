@@ -15,6 +15,17 @@ export default defineComponent({
   data() {
     return {
       stream: new Stream(),
+      ws: undefined as WebSocket | undefined,
+    }
+  },
+  mounted() {
+    this.ws = new WebSocket('ws://localhost:6900')
+    this.ws.addEventListener('message', this.drop)
+  },
+  unmounted() {
+    if (this.ws) {
+      this.ws.removeEventListener('message', this.drop)
+      this.ws.close()
     }
   },
   methods: {
