@@ -1,11 +1,11 @@
 <template>
   <ul>
-    <button @click="fetch">更新</button>
-    <li v-for="item, index of items">
-      <ListItemEdit :value="item" @change="items.splice(index, 1, $event)">{{ item }}</ListItemEdit>
-      <button @click="items.splice(index, 1)">削除</button>
+    <button @click="getList">更新</button>
+    <li v-for="item of items">
+      <ListItemEdit :value="item" @change="update">{{ item }}</ListItemEdit>
+      <button @click="remove(item.id)">削除</button>
     </li>
-    <form @submit.prevent="items.push(input)">
+    <form @submit.prevent="add">
       <input v-model="input" type="text" />
       <input type="submit" value="追加" />
       <input type="reset" />
@@ -16,22 +16,39 @@
 <script lang="ts">
 import { defineComponent, defineAsyncComponent } from 'vue'
 
-const endpoint = 'https://api.labo.danmaid.com/v1/memo'
+const endpoint = 'http://localhost:6900/memos'
 
 export default defineComponent({
   components: {
-    ListItemEdit: defineAsyncComponent(() => import('@/components/ListItemEdit.vue'))
+    ListItemEdit: defineAsyncComponent(() => import('@/components/ListItemEdit.vue')),
   },
   data() {
     return {
-      items: ['hoge', 'fuga'],
+      items: [] as any[],
       input: '',
     }
   },
   methods: {
-    async fetch() {
-      this.items = await fetch(endpoint).then(v => v.json())
-    }
-  }
+    async getList() {
+      this.items = await fetch(endpoint).then((v) => v.json())
+    },
+    async add() {
+      const headers = { 'Content-Type': 'application/json' }
+      const body = JSON.stringify({ input: this.input })
+      await fetch(endpoint, { method: 'POST', headers, body }).then((v) => v.json())
+      this.getList()
+    },
+    async remove(id: string) {
+      await fetch(`${endpoint}/${id}`, { method: 'DELETE' })
+      this.getList()
+    },
+    async update(item: any) {
+      const { id, ...data } = item
+      const headers = { 'Content-Type': 'application/json' }
+      const body = JSON.stringify(data)
+      await fetch(`${endpoint}/${id}`, { method: 'PUT', headers, body })
+      this.getList()
+    },
+  },
 })
 </script>
