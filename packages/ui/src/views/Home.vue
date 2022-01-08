@@ -2,6 +2,7 @@
   <div class="home" style="position: relative">
     <Snow style="position: absolute; z-index: -1"></Snow>
     <div class="contents">
+      <button @click="post">POST</button>
       <img alt="Vue logo" src="../assets/logo.png" />
       <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
     </div>
@@ -17,6 +18,11 @@ export default defineComponent({
   components: {
     HelloWorld,
     Snow: defineAsyncComponent(() => import('./Snow.vue')),
+  },
+  methods: {
+    async post() {
+      await fetch('http://localhost:6900/', { method: 'POST' })
+    },
   },
 })
 </script>

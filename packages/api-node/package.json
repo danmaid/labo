@@ -4,7 +4,9 @@
   "description": "danmaid API node.js implementation.",
   "main": "index.js",
   "devDependencies": {
+    "@types/cors": "^2.8.12",
     "@types/ws": "^8.2.2",
+    "express": "^4.17.2",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.5.4"
   },
@@ -23,6 +25,9 @@
   },
   "homepage": "https://github.com/danmaid/labo#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "helmet": "^5.0.1",
+    "uuid": "^8.3.2",
     "ws": "^8.4.0"
   }
 }
