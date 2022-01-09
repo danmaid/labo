@@ -1,37 +1,20 @@
-import { EventEmitter } from 'events'
+import { ResourceEvent } from './ResourceEvent'
 import { v4 as uuid } from 'uuid'
-
-class ResourceEvent<T> {
-  #emitter = new EventEmitter()
-
-  emit(eventName: 'added', id: string, item: T): boolean
-  emit(eventName: 'updated', id: string, item: T): boolean
-  emit(eventName: 'removed', id: string): boolean
-  emit(eventName: string, ...args: any[]): boolean {
-    return this.#emitter.emit(eventName, ...args)
-  }
-
-  on(eventName: 'added', listener: (id: string, item: T) => void): this
-  on(eventName: 'updated', listener: (id: string, item: T) => void): this
-  on(eventName: 'removed', listener: (id: string) => void): this
-  on(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    this.#emitter.on(eventName, listener)
-    return this
-  }
-
-  once(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    this.#emitter.once(eventName, listener)
-    return this
-  }
-
-  off(eventName: string | symbol, listener: (...args: any[]) => void): this {
-    this.#emitter.off(eventName, listener)
-    return this
-  }
-}
+import { readFile, writeFile } from 'fs/promises'
+import { resolve } from 'path'
 
 export class Resource<T extends Record<string, unknown>> extends ResourceEvent<T> {
   #items = new Map<string, T>()
+  #nextTick: Promise<void>
+  datafile: string
+
+  constructor(public name: string) {
+    super()
+    this.datafile = process.env.DATA_PATH
+      ? resolve(process.env.DATA_PATH, name)
+      : resolve(name)
+    this.#nextTick = Promise.resolve()
+  }
 
   add(item: T): string {
     const id = uuid()

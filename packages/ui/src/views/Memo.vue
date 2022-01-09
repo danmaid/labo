@@ -2,7 +2,7 @@
   <ul>
     <button @click="getList">更新</button>
     <li v-for="item of items">
-      <ListItemEdit :value="item" @change="update">{{ item }}</ListItemEdit>
+      <ListItemEdit :value="item" @change="update">{{ item.body }}</ListItemEdit>
       <button @click="remove(item.id)">削除</button>
     </li>
     <form @submit.prevent="add">
@@ -34,7 +34,7 @@ export default defineComponent({
     },
     async add() {
       const headers = { 'Content-Type': 'application/json' }
-      const body = JSON.stringify({ input: this.input })
+      const body = JSON.stringify({ body: this.input })
       await fetch(endpoint, { method: 'POST', headers, body }).then((v) => v.json())
       this.getList()
     },
