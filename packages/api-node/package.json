@@ -4,14 +4,18 @@
   "description": "danmaid API node.js implementation.",
   "main": "index.js",
   "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
     "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
     "@types/ws": "^8.2.2",
-    "express": "^4.17.2",
+    "babel-jest": "^27.4.6",
+    "jest": "^27.4.7",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.5.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "debug": "ts-node-dev --respawn src/index.ts"
   },
   "repository": {
@@ -26,6 +30,7 @@
   "homepage": "https://github.com/danmaid/labo#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "express": "^4.17.2",
     "helmet": "^5.0.1",
     "uuid": "^8.3.2",
     "ws": "^8.4.0"
