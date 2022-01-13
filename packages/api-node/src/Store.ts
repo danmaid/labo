@@ -1,12 +1,12 @@
 import { writeFile } from 'fs/promises'
-import { readFileSync } from 'fs'
-import { resolve } from 'path'
+import { readFileSync, mkdirSync } from 'fs'
+import { resolve, dirname } from 'path'
 
 export class Store<T extends Record<string, unknown>> extends Map<string, T> {
   #nextTick = Promise.resolve()
   #file: string
 
-  constructor(name = 'items') {
+  constructor(name = 'store') {
     super()
     const filename = name + '.json'
     this.#file = process.env.DATA_DIR ? resolve(process.env.DATA_DIR, filename) : resolve(filename)
@@ -18,6 +18,7 @@ export class Store<T extends Record<string, unknown>> extends Map<string, T> {
     } catch (e) {
       console.info(`datafile: ${this.#file} not found. skip load.`)
     }
+    mkdirSync(dirname(this.#file), { recursive: true })
   }
 
   set(id: string, item: T): this {
