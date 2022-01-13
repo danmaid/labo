@@ -15,8 +15,9 @@
 
 <script lang="ts">
 import { defineComponent, defineAsyncComponent } from 'vue'
+import { v4 as uuid } from 'uuid'
 
-const endpoint = 'http://localhost:6900/memos'
+const endpoint = 'https://api.labo.danmaid.com'
 
 export default defineComponent({
   components: {
@@ -33,9 +34,10 @@ export default defineComponent({
       this.items = await fetch(endpoint).then((v) => v.json())
     },
     async add() {
+      const id = uuid()
       const headers = { 'Content-Type': 'application/json' }
       const body = JSON.stringify({ body: this.input })
-      await fetch(endpoint, { method: 'POST', headers, body }).then((v) => v.json())
+      await fetch(`${endpoint}/${id}`, { method: 'PUT', headers, body })
       this.getList()
     },
     async remove(id: string) {

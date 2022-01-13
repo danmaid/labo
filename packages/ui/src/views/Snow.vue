@@ -19,7 +19,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.ws = new WebSocket('ws://localhost:6900')
+    this.ws = new WebSocket('wss://api.labo.danmaid.com')
     this.ws.addEventListener('message', this.drop)
   },
   unmounted() {

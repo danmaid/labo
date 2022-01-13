@@ -2,27 +2,19 @@
   <div class="home" style="position: relative">
     <Snow style="position: absolute; z-index: -1"></Snow>
     <div class="contents">
-      <button @click="post">POST</button>
-      <img alt="Vue logo" src="../assets/logo.png" />
-      <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+      <Memo></Memo>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineAsyncComponent, defineComponent } from 'vue'
-import HelloWorld from '@/components/HelloWorld.vue' // @ is an alias to /src
 
 export default defineComponent({
   name: 'Home',
   components: {
-    HelloWorld,
     Snow: defineAsyncComponent(() => import('./Snow.vue')),
-  },
-  methods: {
-    async post() {
-      await fetch('http://localhost:6900/', { method: 'POST' })
-    },
+    Memo: defineAsyncComponent(() => import('./Memo.vue')),
   },
 })
 </script>
@@ -30,6 +22,7 @@ export default defineComponent({
 <style>
 .contents {
   background-color: rgba(100, 100, 255, 0.5);
+  color: #fff;
   margin: 0 100px;
 }
 </style>
