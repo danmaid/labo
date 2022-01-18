@@ -1,33 +1,45 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th>名称</th>
-        <th>
-          <button @click="add">add</button>
-          <button @click="refresh">refresh</button>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <template v-for="item of items">
-        <tr v-if="edits.includes(item)" :key="item.url">
-          <td><input type="text" /></td>
-          <td>
-            <button @click="save(item)">save</button>
-            <button @click="cancel(item)">cancel</button>
-          </td>
+  <div>
+    <input v-model="view" type="radio" name="view" id="detail" :value="undefined" /><label for="detail">detail</label>
+    <template v-if="$scope.write">
+      <input v-model="view" type="radio" name="view" id="table" value="table" /><label for="table">table</label>
+    </template>
+  </div>
+  <template v-if="view === 'table'">
+    <table>
+      <thead>
+        <tr>
+          <th>名称</th>
+          <th>
+            <button @click="add">add</button>
+            <button @click="refresh">refresh</button>
+          </th>
         </tr>
-        <tr v-else>
-          <td>{{ item.test }}</td>
-          <td>
-            <button @click="edit(item)">edit</button>
-            <button @click="remove(item)">remove</button>
-          </td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <template v-for="item of items">
+          <tr v-if="edits.includes(item)" :key="item.url">
+            <td><input v-model="item.name" type="text" /></td>
+            <td>
+              <button @click="save(item)">save</button>
+              <button @click="cancel(item)">cancel</button>
+            </td>
+          </tr>
+          <tr v-else>
+            <td>{{ item.name }}</td>
+            <td>
+              <a :href="item.url">detail</a>
+              <button @click="edit(item)">edit</button>
+              <button @click="remove(item)">remove</button>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </template>
+  <template v-else>
+    <h1>Class</h1>
+  </template>
 </template>
 
 <script lang="ts">
@@ -36,7 +48,7 @@ import { v4 as uuid } from 'uuid'
 
 interface Item {
   url: string
-  test?: string
+  name?: string
 }
 
 export default defineComponent({
@@ -44,7 +56,16 @@ export default defineComponent({
     return {
       items: [] as Item[],
       edits: [] as Item[],
+      view: this.$route.query.view,
     }
+  },
+  watch: {
+    view(v) {
+      this.$router.replace({ query: { view: v } })
+    },
+    $route(v) {
+      this.view = v.query.view
+    },
   },
   mounted() {
     this.refresh()

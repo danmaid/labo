@@ -1,16 +1,18 @@
 import { Plugin, reactive } from 'vue'
 
+class Scope {
+  read = false
+  write = false
+}
+
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
-    $scope: Record<'read' | 'write', boolean>
+    $scope: Scope
   }
 }
 
 export const scope: Plugin = {
   install: (app) => {
-    app.config.globalProperties.$scope = reactive({
-      read: false,
-      write: false,
-    })
+    app.config.globalProperties.$scope = reactive(new Scope())
   },
 }
