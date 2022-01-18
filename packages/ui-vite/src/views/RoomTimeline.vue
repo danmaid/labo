@@ -1,0 +1,12 @@
+<template>
+  <table>
+    <thead>
+      <tr>
+        <th>部屋</th>
+        <th>1/19</th>
+        <th>1/20</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</template>
