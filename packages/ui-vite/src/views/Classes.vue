@@ -39,6 +39,9 @@
   </template>
   <template v-else>
     <h1>Class</h1>
+    <template v-for="item of items">
+      <div>{{ item.name }}</div>
+    </template>
   </template>
 </template>
 
