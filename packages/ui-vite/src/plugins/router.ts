@@ -8,6 +8,8 @@ const routes: RouteRecordRaw[] = [
   { path: '/rooms', component: () => import('../views/Rooms.vue') },
   { path: '/room-timeline', component: () => import('../views/RoomTimeline.vue') },
   { path: '/classes', component: () => import('../views/Classes.vue') },
+  { path: '/courses', component: () => import('../views/Courses.vue') },
+  { path: '/experiments', component: () => import('../views/Experiments.vue') }
 ]
 
 export const router = createRouter({

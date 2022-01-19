@@ -1,8 +1,10 @@
 <template>
   <div>
-    <input v-model="view" type="radio" name="view" id="detail" :value="undefined" /><label for="detail">detail</label>
+    <input v-model="view" type="radio" name="view" id="detail" :value="undefined" />
+    <label for="detail">detail</label>
     <template v-if="$scope.write">
-      <input v-model="view" type="radio" name="view" id="table" value="table" /><label for="table">table</label>
+      <input v-model="view" type="radio" name="view" id="table" value="table" />
+      <label for="table">table</label>
     </template>
   </div>
   <template v-if="view === 'table'">
@@ -10,8 +12,7 @@
       <thead>
         <tr>
           <th>名称</th>
-          <th>サブタイトル</th>
-          <th>スケジュール</th>
+          <th>color</th>
           <th>
             <button @click="add">add</button>
             <button @click="refresh">refresh</button>
@@ -21,23 +22,22 @@
       <tbody>
         <template v-for="item of items">
           <tr v-if="edits.includes(item)" :key="item.url">
-            <td><input v-model="item.title" type="text" /></td>
-            <td><input v-model="item.subtitle" type="text" /></td>
-            <td><input v-model="item.schedules" type="text" /></td>
+            <td>
+              <input v-model="item.name" type="text" />
+              <input v-model="item.color" type="color" />
+            </td>
             <td>
               <button @click="save(item)">save</button>
               <button @click="cancel(item)">cancel</button>
             </td>
           </tr>
           <tr v-else>
-            <td>{{ item.title }}</td>
-            <td>{{ item.subtitle }}</td>
-            <td>{{ item.schedules }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.color }}</td>
             <td>
               <a :href="item.url">detail</a>
               <button @click="edit(item)">edit</button>
               <button @click="remove(item)">remove</button>
-              <button>実体化</button>
             </td>
           </tr>
         </template>
@@ -45,10 +45,9 @@
     </table>
   </template>
   <template v-else>
-    <h1>Class</h1>
+    <h1>Course</h1>
     <template v-for="item of items">
-      <div>{{ item.title }}</div>
-      <div>{{ item.subtitle }}</div>
+      <div>{{ item.name }}</div>
     </template>
   </template>
 </template>
@@ -59,9 +58,8 @@ import { v4 as uuid } from 'uuid'
 
 interface Item {
   url: string
-  title?: string
-  subtitle?: string
-  schedules: [Date, string][]
+  name?: string
+  color?: string
 }
 
 export default defineComponent({
@@ -110,6 +108,8 @@ export default defineComponent({
     },
     async save(item: Item) {
       this.$api.put(item.url, item)
+      const index = this.edits.indexOf(item)
+      if (index >= 0) this.edits.splice(index, 1)
     },
   },
 })
