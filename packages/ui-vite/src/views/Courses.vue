@@ -1,8 +1,6 @@
 <template>
   <view-selector :items="[{ name: 'table', scope: 'write' }]"></view-selector>
-  <view-item name="table"></view-item>
-  <view-item></view-item>
-  <template v-if="view === 'table'">
+  <view-item name="table">
     <table>
       <thead>
         <tr>
@@ -38,19 +36,20 @@
         </template>
       </tbody>
     </table>
-  </template>
-  <template v-else>
+  </view-item>
+  <view-item>
     <h1>Course</h1>
     <template v-for="item of items">
       <div>{{ item.name }}</div>
     </template>
-  </template>
+  </view-item>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { v4 as uuid } from 'uuid'
 import ViewSelector from '../components/ViewSelector.vue'
+import ViewItem from '../components/ViewItem.vue'
 
 interface Item {
   url: string
@@ -59,21 +58,12 @@ interface Item {
 }
 
 export default defineComponent({
-  components: { ViewSelector },
+  components: { ViewSelector, ViewItem },
   data() {
     return {
       items: [] as Item[],
       edits: [] as Item[],
-      view: this.$route.query.view,
     }
-  },
-  watch: {
-    view(v) {
-      this.$router.replace({ query: { view: v } })
-    },
-    $route(v) {
-      this.view = v.query.view
-    },
   },
   mounted() {
     this.refresh()
