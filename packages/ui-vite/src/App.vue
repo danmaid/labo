@@ -6,7 +6,7 @@
     <router-link to="/experiments">Experiment</router-link> | <router-link to="/schedules">Schedules</router-link>
   </div>
   <div>
-    アクセス許可(permission)
+    アクセス許可(scope)
     <input id="public" type="checkbox" disabled checked />
     <label for="public">public</label>
     <template v-for="(_, key) of $scope">

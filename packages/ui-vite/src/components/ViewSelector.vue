@@ -26,7 +26,7 @@ export default defineComponent({
       },
     },
     views(): string[] {
-      return this.items.filter((v) => this.$scope.hasScope(v.scope)).map((v) => v.name)
+      return this.items.filter((v) => !v.scope || this.$scope.hasScope(v.scope)).map((v) => v.name)
     },
   },
   watch: {

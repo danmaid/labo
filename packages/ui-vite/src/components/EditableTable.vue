@@ -1,6 +1,10 @@
 <template>
   <table>
-    <caption>{{ caption }}</caption>
+    <caption>
+      {{
+        caption
+      }}
+    </caption>
     <thead>
       <tr>
         <template v-for="column of columns">
@@ -52,12 +56,18 @@ interface Item extends Record<string, unknown> {
   id: string
 }
 
+export interface Column {
+  value: string
+  text?: string
+  inputType?: string
+}
+
 export default defineComponent({
   props: {
     columns: {
-      type: Array as PropType<{ value: string; text?: string; inputType?: string }[]>
+      type: Array as PropType<Column[]>,
     },
-    caption: { type: String }
+    caption: { type: String },
   },
   data() {
     return {
