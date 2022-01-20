@@ -1,43 +1,9 @@
 <template>
   <view-selector :items="[{ name: 'table', scope: 'write' }]"></view-selector>
   <view-item name="table">
-    <table>
-      <thead>
-        <tr>
-          <th>題名</th>
-          <th>パート</th>
-          <th>
-            <button @click="add">add</button>
-            <button @click="refresh">refresh</button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="item of items">
-          <tr v-if="edits.includes(item)" :key="item.url">
-            <td>
-              <input v-model="item.title" type="text" />
-            </td>
-            <td>
-              <input v-model="item.part" type="number" />
-            </td>
-            <td>
-              <button @click="save(item)">save</button>
-              <button @click="cancel(item)">cancel</button>
-            </td>
-          </tr>
-          <tr v-else>
-            <td>{{ item.title }}</td>
-            <td>{{ item.part }}</td>
-            <td>
-              <a :href="item.url">detail</a>
-              <button @click="edit(item)">edit</button>
-              <button @click="remove(item)">remove</button>
-            </td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
+    <editable-table
+      :columns="[{ text: '題名', value: 'title' }, { text: 'パート', value: 'part', inputType: 'number' }]"
+    ></editable-table>
   </view-item>
   <view-item>
     <h1>Experiments</h1>
@@ -49,9 +15,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { v4 as uuid } from 'uuid'
 import ViewSelector from '../components/ViewSelector.vue'
 import ViewItem from '../components/ViewItem.vue'
+import EditableTable from '../components/EditableTable.vue'
 
 interface Item {
   url: string
@@ -60,11 +26,10 @@ interface Item {
 }
 
 export default defineComponent({
-  components: { ViewSelector, ViewItem },
+  components: { ViewSelector, ViewItem, EditableTable },
   data() {
     return {
       items: [] as Item[],
-      edits: [] as Item[],
     }
   },
   mounted() {
@@ -74,31 +39,6 @@ export default defineComponent({
     async refresh() {
       const items = await this.$api.get<{ id: string }[]>(this.$route.path)
       this.items = items.map((v) => ({ url: `${this.$route.path}/${v.id}`, ...v }))
-    },
-    async remove(item: Item) {
-      const ok = await this.$api.delete(item.url)
-      if (ok) {
-        const index = this.items.indexOf(item)
-        if (index >= 0) this.items.splice(index, 1)
-      }
-    },
-    edit(item: Item) {
-      this.edits.push(item)
-    },
-    cancel(item: Item) {
-      const index = this.edits.indexOf(item)
-      if (index >= 0) this.edits.splice(index, 1)
-    },
-    add() {
-      const id = uuid()
-      const item = { url: `${this.$route.path}/${id}` }
-      this.items.push(item)
-      this.edits.push(item)
-    },
-    async save(item: Item) {
-      this.$api.put(item.url, item)
-      const index = this.edits.indexOf(item)
-      if (index >= 0) this.edits.splice(index, 1)
     },
   },
 })

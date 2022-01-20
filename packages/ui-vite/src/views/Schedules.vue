@@ -1,97 +1,8 @@
 <template>
   <view-selector :items="[{ name: 'table', scope: 'write' }]"></view-selector>
   <view-item name="table">
-    <table>
-      <caption>定義</caption>
-      <thead>
-        <tr>
-          <th>年</th>
-          <th>月</th>
-          <th>日</th>
-          <th>時</th>
-          <th>分</th>
-          <th>秒</th>
-          <th>長さ</th>
-          <th>概要</th>
-          <th>
-            <button @click="add">add</button>
-            <button @click="refresh">refresh</button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="item of items">
-          <tr v-if="edits.includes(item)" :key="item.url">
-            <td>
-              <input v-model="item.start" type="datetime-local" />
-            </td>
-            <td>
-              <input v-model="item.end" type="datetime-local" />
-            </td>
-            <td>
-              <input v-model="item.summary" type="text" />
-            </td>
-            <td>
-              <button @click="save(item)">save</button>
-              <button @click="cancel(item)">cancel</button>
-            </td>
-          </tr>
-          <tr v-else>
-            <td>{{ item.start }}</td>
-            <td>{{ item.end }}</td>
-            <td>{{ item.summary }}</td>
-            <td>
-              <a :href="item.url">detail</a>
-              <button @click="edit(item)">edit</button>
-              <button @click="remove(item)">remove</button>
-            </td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
-    <table>
-      <caption>実体</caption>
-      <thead>
-        <tr>
-          <th>開始</th>
-          <th>終了</th>
-          <th>概要</th>
-          <th>
-            <button @click="add">add</button>
-            <button @click="refresh">refresh</button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="item of items">
-          <tr v-if="edits.includes(item)" :key="item.url">
-            <td>
-              <input v-model="item.start" type="datetime-local" />
-            </td>
-            <td>
-              <input v-model="item.end" type="datetime-local" />
-            </td>
-            <td>
-              <input v-model="item.summary" type="text" />
-            </td>
-            <td>
-              <button @click="save(item)">save</button>
-              <button @click="cancel(item)">cancel</button>
-            </td>
-          </tr>
-          <tr v-else>
-            <td>{{ item.start }}</td>
-            <td>{{ item.end }}</td>
-            <td>{{ item.summary }}</td>
-            <td>
-              <a :href="item.url">detail</a>
-              <button @click="edit(item)">edit</button>
-              <button @click="remove(item)">remove</button>
-            </td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
+    <editable-table :columns="columns" caption="定義"></editable-table>
+    <editable-table :columns="columns" caption="実体"></editable-table>
   </view-item>
   <view-item>
     <h1>Schedule</h1>
@@ -103,9 +14,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { v4 as uuid } from 'uuid'
 import ViewSelector from '../components/ViewSelector.vue'
 import ViewItem from '../components/ViewItem.vue'
+import EditableTable from '../components/EditableTable.vue'
 
 interface Item {
   url: string
@@ -115,11 +26,21 @@ interface Item {
 }
 
 export default defineComponent({
-  components: { ViewSelector, ViewItem },
+  components: { ViewSelector, ViewItem, EditableTable },
   data() {
     return {
       items: [] as Item[],
-      edits: [] as Item[],
+      columns: [
+        { text: '年', value: 'year', inputType: 'number' },
+        { text: '月', value: 'month', inputType: 'number' },
+        { text: '日', value: 'day', inputType: 'number' },
+        { text: '時', value: 'hour', inputType: 'number' },
+        { text: '分', value: 'minute', inputType: 'number' },
+        { text: '秒', value: 'second', inputType: 'number' },
+        { text: '開始', value: 'start', inputType: 'datetime-local' },
+        { text: '終了', value: 'end', inputType: 'datetime-local' },
+        { text: '概要', value: 'summary' },
+      ]
     }
   },
   mounted() {
@@ -129,29 +50,6 @@ export default defineComponent({
     async refresh() {
       const items = await this.$api.get<{ id: string }[]>(this.$route.path)
       this.items = items.map((v) => ({ url: `${this.$route.path}/${v.id}`, ...v }))
-    },
-    async remove(item: Item) {
-      const ok = await this.$api.delete(item.url)
-      if (ok) {
-        const index = this.items.indexOf(item)
-        if (index >= 0) this.items.splice(index, 1)
-      }
-    },
-    edit(item: Item) {
-      this.edits.push(item)
-    },
-    cancel(item: Item) {
-      const index = this.edits.indexOf(item)
-      if (index >= 0) this.edits.splice(index, 1)
-    },
-    add() {
-      const id = uuid()
-      const item = { url: `${this.$route.path}/${id}` }
-      this.items.push(item)
-      this.edits.push(item)
-    },
-    async save(item: Item) {
-      this.$api.put(item.url, item)
     },
   },
 })
