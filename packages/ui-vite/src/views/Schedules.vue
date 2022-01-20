@@ -1,10 +1,5 @@
 <template>
-  <div>
-    <input v-model="view" type="radio" name="view" id="detail" :value="undefined" /><label for="detail">detail</label>
-    <template v-if="$scope.write">
-      <input v-model="view" type="radio" name="view" id="table" value="table" /><label for="table">table</label>
-    </template>
-  </div>
+  <view-selector :items="[{ name: 'table', scope: 'write' }]"></view-selector>
   <template v-if="view === 'table'">
     <table>
       <caption>定義</caption>
@@ -97,6 +92,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { v4 as uuid } from 'uuid'
+import ViewSelector from '../components/ViewSelector.vue'
 
 interface Item {
   url: string
@@ -106,6 +102,7 @@ interface Item {
 }
 
 export default defineComponent({
+  components: { ViewSelector },
   data() {
     return {
       items: [] as Item[],

@@ -6,6 +6,9 @@
     <router-link to="/experiments">Experiment</router-link> | <router-link to="/schedules">Schedules</router-link>
   </div>
   <div>
+    アクセス許可(permission)
+    <input id="public" type="checkbox" disabled checked />
+    <label for="public">public</label>
     <template v-for="(_, key) of $scope">
       <input v-model="$scope[key]" :id="key" type="checkbox" />
       <label :for="key">{{ key }}</label>
