@@ -17,7 +17,9 @@
         <tr v-if="edits.includes(item)" :key="item.id">
           <template v-for="column of columns">
             <td>
-              <input v-model="item[column.value]" :type="column.inputType" />
+              <slot :name="`edit.${column.value}`" :item="item" :value="item[column.value]">
+                <input v-model="item[column.value]" :type="column.inputType" />
+              </slot>
             </td>
           </template>
           <td>
@@ -27,7 +29,9 @@
         </tr>
         <tr v-else>
           <template v-for="column of columns">
-            <td>{{ item[column.value] }}</td>
+            <td>
+              <slot :name="`item.${column.value}`">{{ item[column.value] }}</slot>
+            </td>
           </template>
           <td>
             <a :href="`${$route.path}/${item.id}`">detail</a>

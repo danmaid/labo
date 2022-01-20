@@ -1,8 +1,8 @@
 <template>
   <view-selector :items="[{ name: 'table', scope: 'write' }]"></view-selector>
   <view-item name="table">
-    <editable-table :columns="columns" caption="定義"></editable-table>
-    <editable-table :columns="columns" caption="実体"></editable-table>
+    <editable-table :columns="definitionColumns" caption="定義"></editable-table>
+    <editable-table :columns="entifyColumns" caption="実体"></editable-table>
   </view-item>
   <view-item>
     <h1>Schedule</h1>
@@ -30,16 +30,21 @@ export default defineComponent({
   data() {
     return {
       items: [] as Item[],
-      columns: [
+      definitionColumns: [
         { text: '年', value: 'year', inputType: 'number' },
         { text: '月', value: 'month', inputType: 'number' },
         { text: '日', value: 'day', inputType: 'number' },
         { text: '時', value: 'hour', inputType: 'number' },
         { text: '分', value: 'minute', inputType: 'number' },
         { text: '秒', value: 'second', inputType: 'number' },
+        { text: '長さ', value: 'length' },
+        { text: '概要', value: 'summary' },
+      ],
+      entifyColumns: [
         { text: '開始', value: 'start', inputType: 'datetime-local' },
         { text: '終了', value: 'end', inputType: 'datetime-local' },
         { text: '概要', value: 'summary' },
+        { text: '定義', value: 'definition' }
       ]
     }
   },

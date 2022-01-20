@@ -1,9 +1,14 @@
 <template>
   <view-selector :items="[{ name: 'table', scope: 'write' }]"></view-selector>
   <view-item name="table">
-    <editable-table
-      :columns="[{ text: '題名', value: 'title' }, { text: 'パート', value: 'part', inputType: 'number' }]"
-    ></editable-table>
+    <editable-table :columns="columns">
+      <template #edit.schedules="{ item }">
+        <select v-model="item.schedules" multiple>
+          <option>A</option>
+          <option>B</option>
+        </select>
+      </template>
+    </editable-table>
   </view-item>
   <view-item>
     <h1>Experiments</h1>
@@ -29,6 +34,10 @@ export default defineComponent({
   components: { ViewSelector, ViewItem, EditableTable },
   data() {
     return {
+      columns: [
+        { text: '題名', value: 'title' },
+        { text: 'スケジュール', value: 'schedules' }
+      ],
       items: [] as Item[],
     }
   },
