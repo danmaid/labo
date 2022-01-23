@@ -3,11 +3,13 @@ import { Plugin, reactive } from 'vue'
 class Scope {
   read = false
   write = false
+  dev = false
 
   hasScope(scope?: string): boolean {
-    if (!scope) return this.read || this.write
+    if (!scope) return this.read || this.write || this.dev
     if (scope === 'read') return this.read
     if (scope === 'write') return this.write
+    if (scope === 'dev') return this.dev
     return false
   }
 }
