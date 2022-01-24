@@ -11,6 +11,17 @@ const routes: RouteRecordRaw[] = [
   { path: '/courses', component: () => import('../views/Courses.vue') },
   { path: '/experiments', component: () => import('../views/Experiments.vue') },
   { path: '/schedules', component: () => import('../views/Schedules.vue') },
+  {
+    path: '/resource',
+    component: () => import('../components/EditableTable.vue'),
+    props: {
+      columns: [
+        { text: 'resource', value: 'resource' },
+        { text: 'id', value: 'id' },
+      ],
+    },
+  },
+  { path: '/user', component: () => import('../views/User.vue') },
 ]
 
 export const router = createRouter({

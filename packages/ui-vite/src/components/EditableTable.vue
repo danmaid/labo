@@ -34,7 +34,9 @@
         <tr v-else>
           <template v-for="column of columns">
             <td>
-              <slot :name="`item.${column.value}`">{{ item[column.value] }}</slot>
+              <slot :name="`item.${column.value}`" :item="item" :value="item[column.value]">{{
+                item[column.value]
+              }}</slot>
             </td>
           </template>
           <td>
