@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <body style="display: flex; margin: 0">
+    <aside style="flex-grow: 1; background-color: #aaa; height: 100vh">
+      <div name="snow" style="width: 100%; height: 100%; overflow: hidden; position: relative"></div>
+    </aside>
+    <main style="flex-grow: 5; margin: 8px; position: relative">
+      <header style="position: absolute; right: 0">
+        <input name="view" type="radio" id="view-main" /><label for="view-main">メイン</label>
+        <input name="view" type="radio" id="view-table" value="table" /><label for="view-table">テーブル</label>
+        <button>山田</button>
+      </header>
+      <div>メインコンテンツ</div>
+    </main>
+    <aside style="flex-grow: 1; background-color: #aaa; height: 100vh">
+      <div name="snow" style="width: 100%; height: 100%; overflow: hidden; position: relative"></div>
+    </aside>
+
+    <aside style="position: absolute; top: 3em; right: 8px">
+      <fieldset>
+        <legend>主体(subject)</legend>
+        <label for="user-select">利用者(user)</label>
+        <select name="user" id="user-select">
+          <option selected>未選択</option>
+          <option>山田</option>
+          <option>鈴木</option>
+          <option>斉藤</option>
+          <option>田中</option>
+        </select>
+        <fieldset>
+          <div>
+            役割(role)
+            <template v-for="(item, i) of roles">
+              <label :for="`role-${i}`">{{ item.name }}</label>
+              <input type="checkbox" :id="`role-${i}`" :value="item.id" v-model="role" />
+            </template>
+          </div>
+        </fieldset>
+        <div>
+          権限(scope)
+          <template v-for="(item, i) of scopes">
+            <label :for="`scope-${i}`">{{ item.name }}</label>
+            <input type="checkbox" :id="`scope-${i}`" :value="item.id" v-model="scope" />
+          </template>
+        </div>
+      </fieldset>
+    </aside>
+
+    <style>
+      @keyframes drop {
+        from {
+          top: 0%;
+        }
+        to {
+          top: 100%;
+        }
+      }
+    </style>
+    <script>
+      let side = 0
+      setInterval(async () => {
+        const snow = document.createElement('div')
+        snow.style.backgroundColor = '#fff'
+        snow.style.position = 'absolute'
+        snow.style.width = '5px'
+        snow.style.height = '5px'
+        snow.style.borderRadius = '50%'
+        snow.style.left = Math.floor(Math.random() * 100) + '%'
+        snow.style.animation = 'drop 3s linear forwards'
+        const targets = document.getElementsByName('snow')
+        const root = targets[side < targets.length - 1 ? ++side : (side = 0)]
+        root.appendChild(snow)
+        await new Promise((resolve) => setTimeout(resolve, 3000))
+        root.removeChild(snow)
+      }, 1000)
+    </script>
+  </body>
+</html>
