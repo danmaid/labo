@@ -1,6 +1,13 @@
 <template>
   <view-selector :items="[{ name: 'table' }]"></view-selector>
   <view-item name="table">
+    <Select
+      v-model="ss"
+      :items="[
+        { value: 'a', text: '1' },
+        { value: 'B', text: '2' },
+      ]"
+    ></Select>
     <table>
       <caption>
         サマリ
@@ -72,10 +79,6 @@
             </td>
           </tr>
         </template>
-        <tr v-if="$scope.write">
-          <td><Combobox v-model="resource" :list="resources.map((v) => v.id)"></Combobox></td>
-          <td><button @click="add">add</button></td>
-        </tr>
       </tbody>
     </table>
   </view-item>
@@ -93,8 +96,8 @@
 import { defineAsyncComponent, defineComponent } from 'vue'
 import ViewSelector from '../components/ViewSelector.vue'
 import ViewItem from '../components/ViewItem.vue'
-import { v4 as uuid } from 'uuid'
 import Combobox from '../components/Combobox.vue'
+import Select from '../components/Select.vue'
 
 export default defineComponent({
   name: 'Home',
@@ -104,6 +107,7 @@ export default defineComponent({
     ViewSelector,
     ViewItem,
     Combobox,
+    Select,
   },
   data() {
     return {
@@ -111,13 +115,15 @@ export default defineComponent({
         { text: 'リソース', value: 'resource' },
         { text: '識別子', value: 'id' },
         { text: '名称', value: 'name' },
+        { text: '列リスト', value: 'columns' },
+        { text: '題名', value: 'title' },
+        { text: '値', value: 'value' },
         { text: '対象', value: 'target' },
         { text: 'scopes', value: 'scopes' },
         { text: 'roles', value: 'roles' },
         { text: '色', value: 'color', inputType: 'color' },
         { text: '教室', value: 'departments', scope: 'read' },
         { text: '組', value: 'class', scope: 'read' },
-        { text: '題名', value: 'title' },
         { text: 'スケジュール', value: 'schedules' },
         // { text: '年', value: 'year', inputType: 'number', scope: 'dev' },
         // { text: '月', value: 'month', inputType: 'number', scope: 'dev' },
@@ -132,12 +138,14 @@ export default defineComponent({
         { text: '定義', value: 'definition' },
         { text: 'refs', value: 'refs', scope: 'dev' },
         { text: 'source', value: 'source', scope: 'dev' },
+        { text: 'テンプレート', value: 'template' },
       ],
       items: [] as any[],
       edits: [] as any[],
       resources: [] as any[],
       resource: '',
       summary: [] as any[],
+      ss: undefined,
     }
   },
   computed: {
