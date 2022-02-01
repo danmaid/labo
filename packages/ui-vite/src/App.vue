@@ -8,7 +8,8 @@
     <router-link to="/courses">Course</router-link> | <router-link to="/class">Class</router-link> |
     <router-link to="/experiments">Experiment</router-link> | <router-link to="/schedules">Schedules</router-link> |
     <router-link to="/resource">Resource</router-link> | <router-link to="/user">User</router-link> |
-    <router-link to="/column">Column</router-link> | <router-link to="/role">Role</router-link>
+    <router-link to="/column">Column</router-link> | <router-link to="/role">Role</router-link> |
+    <router-link to="/department">Department</router-link> | <router-link to="/address">Address</router-link>
   </div>
   <div>
     アクセス許可(scope)

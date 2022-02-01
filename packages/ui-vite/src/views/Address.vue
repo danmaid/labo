@@ -1,7 +1,7 @@
 <template>
   <view-selector :items="[{ name: 'table' }]"></view-selector>
   <view-item name="table">
-    <Table :columns="scopedColumns" :items="filteredItems">
+    <Table :columns="columns" :items="items">
       <template #header.actions>
         <button @click="refresh">refresh</button>
       </template>
@@ -20,6 +20,7 @@
           </td>
         </tr>
       </template>
+      <template #item.map_url="{ value }">{{ value && `${value.slice(0, 10)}...` }}</template>
       <template #item.actions="{ item }">
         <button @click="edits.push(item.id)">edit</button>
         <button @click="remove(item.id)">remove</button>
@@ -29,13 +30,19 @@
         <button @click="add">add</button>
       </template>
     </Table>
-    <editable-table :columns="scopedColumns"></editable-table>
   </view-item>
   <view-item>
-    <h1>Class</h1>
+    <h1>Address</h1>
     <template v-for="item of items">
-      <div>{{ item.name }}</div>
+      <div>
+        <a :href="`/address/${item.id}`">{{ item.name }}</a>
+      </div>
     </template>
+    <iframe
+      src="https://www.google.com/maps/d/embed?mid=14f9fIlAmbAIGiKuETnPyWylfrwEqY2li&ehbc=2E312F"
+      width="640"
+      height="480"
+    ></iframe>
   </view-item>
 </template>
 
@@ -43,43 +50,37 @@
 import { defineComponent } from 'vue'
 import ViewSelector from '../components/ViewSelector.vue'
 import ViewItem from '../components/ViewItem.vue'
-import EditableTable, { Column } from '../components/EditableTable.vue'
 import Table from '../components/Table.vue'
+import Combobox from '../components/Combobox.vue'
 
 export default defineComponent({
-  components: { ViewSelector, ViewItem, EditableTable, Table },
+  components: { ViewSelector, ViewItem, Table, Combobox },
   data() {
     return {
+      items: [] as any[],
       columns: [
         { text: '識別子', value: 'id' },
         { text: '名称', value: 'name' },
-        { text: '教室', value: 'department', scope: 'department' },
-        { text: '組', value: 'class', scope: 'class' },
-        { text: 'source', value: 'source' },
+        { text: '郵便番号', value: 'postal_code' },
+        { text: '都道府県', value: 'region' },
+        { text: '市区町村', value: 'locality' },
+        { text: '町名以降', value: 'street_address' },
+        { text: 'マップURL', value: 'map_url' },
         { text: '', value: 'actions' },
       ],
-      items: [] as any[],
-      edits: [] as string[],
       id: undefined,
+      edits: [] as string[],
     }
-  },
-  computed: {
-    scopedColumns(): Column[] {
-      return this.columns.filter((v) => !v.scope || this.$auth.has(v.scope))
-    },
-    filteredItems(): any[] {
-      return this.items.filter((item) => this.scopedColumns.some((v) => !!item[v.value]))
-    },
   },
   mounted() {
     this.refresh()
   },
   methods: {
     async refresh() {
-      this.items = await this.$api.get<{ id: string }[]>('class')
+      this.items = await this.$api.get('/address')
     },
     async add() {
-      await this.$api.put(`/class/${this.id}`, {})
+      await this.$api.put(`/address/${this.id}`, {})
       this.refresh()
     },
     cancel(id: string) {
@@ -87,12 +88,12 @@ export default defineComponent({
       if (index >= 0) this.edits.splice(index, 1)
     },
     async save(id: string, item: any) {
-      await this.$api.put(`/class/${id}`, item)
+      await this.$api.put(`/address/${id}`, item)
       this.cancel(id)
       this.refresh()
     },
     async remove(id: string) {
-      await this.$api.delete(`/class/${id}`)
+      await this.$api.delete(`/address/${id}`)
       this.refresh()
     },
   },

@@ -24,6 +24,10 @@ const routes: RouteRecordRaw[] = [
   { path: '/user', component: () => import('../views/User.vue') },
   { path: '/column', component: () => import('../views/Column.vue') },
   { path: '/role', component: () => import('../views/Role.vue') },
+  { path: '/department', component: () => import('../views/Department.vue') },
+  { path: '/department/:id', component: () => import('../views/DepartmentDetail.vue') },
+  { path: '/address', component: () => import('../views/Address.vue') },
+  { path: '/address/:id', component: () => import('../views/AddressDetail.vue') },
 ]
 
 export const router = createRouter({

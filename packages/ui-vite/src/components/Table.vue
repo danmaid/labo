@@ -8,21 +8,25 @@
     <thead>
       <tr>
         <template v-for="column of columns">
-          <th>{{ column.text }}</th>
+          <th>
+            <slot :name="`header.${column.value}`">{{ column.text }}</slot>
+          </th>
         </template>
       </tr>
     </thead>
     <tbody>
       <template v-for="item of items">
-        <tr>
-          <template v-for="column of columns">
-            <td>
-              <slot :name="`item.${column.value}`" :item="item" :value="item[column.value]">{{
-                item[column.value]
-              }}</slot>
-            </td>
-          </template>
-        </tr>
+        <slot :name="`row.${item.id}`" :item="item">
+          <tr>
+            <template v-for="column of columns">
+              <td>
+                <slot :name="`item.${column.value}`" :item="item" :value="item[column.value]">{{
+                  item[column.value]
+                }}</slot>
+              </td>
+            </template>
+          </tr>
+        </slot>
       </template>
     </tbody>
     <tfoot>
