@@ -1,13 +1,14 @@
 import { createServer } from 'http'
-import express from 'express'
+import express, { Request, Response } from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import { WebSocket, WebSocketServer } from 'ws'
 import { Store } from './Store'
-import { Core } from './core'
+import core from './core'
 import { v4 as uuid } from 'uuid'
 
-const core = new Core()
+core.on((ev) => console.debug(ev))
+
 const app = express()
 export const server = createServer(app)
 const wss = new WebSocketServer({ server })
@@ -24,23 +25,30 @@ app.use(helmet())
 app.use(cors())
 app.use(express.json())
 
-app.all('*', (req, res) => {
+/**
+ * HTTP Request
+ * Core I/O
+ *   Input: { request_id, method, url, headers, body }
+ *   Output: { request_id, response, body }
+ * Timeout: 5000ms
+ */
+function handleHTTPRequest({ method, url, headers, body }: Request, res: Response) {
   const request_id = uuid()
-  const { method, url, headers, body } = req
   const timeout = setTimeout(() => {
-    core.off(responseHandler)
-    res.sendStatus(504)
-  })
-  const responseHandler = (ev: any) => {
+    core.off(listener)
+    res.status(504).end()
+  }, 5000)
+  const listener = core.on((ev: any) => {
     if (!('response' in ev && ev.request_id === request_id)) return
-    core.off(responseHandler)
+    core.off(listener)
     clearTimeout(timeout)
     const body = ev.body
     res.json(body)
-  }
-  core.on(responseHandler)
+  })
   core.emit({ request_id, method, url, headers, body })
-})
+}
+
+app.all('*', handleHTTPRequest)
 
 app
   .route('/:id')

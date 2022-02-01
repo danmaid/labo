@@ -1,4 +1,4 @@
-export class Core {
+export default new class Core {
   listeners: ((event: any) => void)[] = []
 
   emit(event?: any): void {
@@ -7,20 +7,13 @@ export class Core {
     }
   }
 
-  on(listener: (event: any) => void): void {
+  on(listener: (event: any) => void): (event: any) => void {
     this.listeners.push(listener)
+    return listener
   }
 
   off(listener: (event: any) => void): void {
     const index = this.listeners.indexOf(listener)
     if (index >= 0) this.listeners.splice(index, 1)
-  }
-
-  once(listener: (event: any) => void): void {
-    const onceListener = (event: any) => {
-      listener(event)
-      this.off(onceListener)
-    }
-    this.listeners.push(onceListener)
   }
 }
