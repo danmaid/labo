@@ -1,6 +1,6 @@
 import { Server } from 'http'
 import { WebSocket, WebSocketServer } from 'ws'
-import core from './core'
+import core from './Core'
 import { v4 as uuid } from 'uuid'
 
 export const server = new Server()
@@ -25,7 +25,7 @@ server.on('request', (req, res) => {
   const { httpVersion, method, url, headers } = req
   core.emit({ request: id, http: httpVersion, method, url, headers })
 
-  let body: any
+  let body = ''
   req.on('data', (chunk) => {
     body += chunk
   })
@@ -36,6 +36,19 @@ server.on('request', (req, res) => {
 })
 
 const wss = new WebSocketServer({ server })
+//// pass through
+// WebSocket Client -> WebSocket Server -> Core
+wss.on('connection', (ws) => {
+  ws.on('message', (data) => {
+    try {
+      core.emit(JSON.parse(data.toString()))
+    } catch (e) {
+      console.error(e)
+      console.error('invalid message received.', data)
+    }
+  })
+})
+// Core -> WebSocket Server -> WebSocket Client
 core.on(async (event) => {
   const message = JSON.stringify(event)
   wss.clients.forEach((client) => {

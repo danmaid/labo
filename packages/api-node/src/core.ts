@@ -1,6 +1,14 @@
-export default new class Core {
+type EventListener = (event?: any) => void
+
+export interface SimpleIO {
+  emit(event?: any): void
+  on(listener: EventListener): EventListener
+}
+
+export class Core implements SimpleIO {
   listeners: ((event: any) => void)[] = []
 
+  emit<T>(event?: T): void
   emit(event?: any): void {
     for (const listener of this.listeners) {
       listener(event)

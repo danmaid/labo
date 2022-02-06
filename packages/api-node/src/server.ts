@@ -4,7 +4,7 @@ import helmet from 'helmet'
 import cors from 'cors'
 import { WebSocket, WebSocketServer } from 'ws'
 import { Store } from './Store'
-import core from './core'
+import core from './Core'
 import { v4 as uuid } from 'uuid'
 
 core.on((ev) => console.debug(ev))
