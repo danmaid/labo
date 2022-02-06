@@ -2,37 +2,21 @@ import { Server, IncomingMessage, ServerResponse } from 'http'
 import { WebSocket, WebSocketServer } from 'ws'
 import { v4 as uuid } from 'uuid'
 import { Core, SimpleIO } from './Core'
-
-export type HttpRequest = {
-  /** Request ID (Generated) */
-  request: string
-  /** HTTP Version */
-  http: IncomingMessage['httpVersion']
-} & Pick<IncomingMessage, 'method' | 'url' | 'headers'>
-
-export type HttpRequestBody = {
-  request: HttpRequest['request']
-  body: any
-}
-
-export interface ResponseBody {
-  request: HttpRequest['request']
-  result: any
-}
+import { HttpRequest, RequestBody, ResponseBody } from 'types'
 
 /**
  * HTTP Protocol adapter
- * 
+ *
  * Client -> request -> output
  * Client(WebSocket) -> JSON.parse -> output
  * input -> JSON.stringify -> Client(WebSocket)
- * 
+ *
  * HTTP Server listen on :6900
  */
 export class Http extends Core implements SimpleIO {
   server: Server
   wss: WebSocketServer
-  #io: SimpleIO
+  #io: Core
 
   constructor() {
     super()
@@ -76,21 +60,49 @@ export class Http extends Core implements SimpleIO {
 
   onrequest(req: IncomingMessage, res: ServerResponse) {
     console.debug('>>onrequest')
+    // CORS
+    const allowOrigins = ['http://localhost:3000']
+    if (req.headers.origin && allowOrigins.includes(req.headers.origin)) {
+      res.setHeader('Access-Control-Allow-Origin', req.headers.origin)
+      res.setHeader('Access-Control-Allow-Headers', '*')
+      if (req.method === 'OPTIONS') return res.writeHead(204).end()
+    }
+    //
     const id = uuid()
     const { httpVersion, method, url, headers } = req
+    // Response
+    const accept = req.headers.accept
+    if (accept && ['application/json', 'application/*', '*/*'].some((v) => accept.startsWith(v))) {
+      const listener = this.#io.on((event) => {
+        if (!(typeof event === 'object' && event.request === id && 'result' in event)) return
+        this.#io.off(listener)
+        clearTimeout(timeout)
+        res.writeHead(200).end(JSON.stringify(event))
+      })
+      const timeout = setTimeout(() => {
+        this.#io.off(listener)
+        res.writeHead(202).end()
+      }, 5000)
+    }
+    //
     super.emit<HttpRequest>({ request: id, http: httpVersion, method, url, headers })
-    this.#io.on((event) => {
-      
-    })
 
-    let body = ''
-    req.on('data', (chunk) => {
-      body += chunk
-    })
-    req.on('end', () => {
-      if (body) super.emit<HttpRequestBody>({ request: id, body })
-      res.writeHead(200).end()
-    })
-
+    // Body
+    if (req.headers['content-type']) {
+      let data = ''
+      req.on('data', (chunk) => (data += chunk))
+      if (req.headers['content-type'] === 'application/json') {
+        req.on('end', () => {
+          try {
+            const body = JSON.parse(data)
+            super.emit<RequestBody>({ request: id, body })
+          } catch (e) {
+            res.writeHead(400).end()
+          }
+        })
+      } else {
+        req.on('end', () => super.emit<RequestBody>({ request: id, body: data }))
+      }
+    }
   }
 }

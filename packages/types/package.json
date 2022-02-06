@@ -1,0 +1,20 @@
+{
+  "name": "types",
+  "version": "0.0.1",
+  "description": "",
+  "main": "",
+  "types": "index.d.ts",
+  "devDependencies": {
+    "typescript": "^4.5.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danmaid/labo.git"
+  },
+  "author": "danmaid",
+  "license": "MIT"
+}
