@@ -2,7 +2,7 @@ import { Server, IncomingMessage, ServerResponse } from 'http'
 import { WebSocket, WebSocketServer } from 'ws'
 import { v4 as uuid } from 'uuid'
 import { Core, SimpleIO } from './Core'
-import { HttpRequest, RequestBody, ResponseBody } from 'types'
+import { HttpRequest, RequestBody } from 'types'
 
 /**
  * HTTP Protocol adapter
@@ -16,26 +16,26 @@ import { HttpRequest, RequestBody, ResponseBody } from 'types'
 export class Http extends Core implements SimpleIO {
   server: Server
   wss: WebSocketServer
-  #io: Core
+  #events: Core
 
   constructor() {
     super()
     const server = new Server()
     const wss = new WebSocketServer({ server })
-    const io = new Core()
+    const events = new Core()
     wss.on('connection', (ws) => this.onconnection(ws))
-    io.on((event) => this.onmessage(event))
+    events.on((event) => this.onevent(event))
     server.on('request', (req, res) => this.onrequest(req, res))
     server.listen(6900, () => {
       console.info('HTTP Server started.', server.address())
     })
-    this.#io = io
+    this.#events = events
     this.wss = wss
     this.server = server
   }
 
-  emit(message: any) {
-    this.#io.emit(message)
+  emit(event: any) {
+    this.#events.emit(event)
   }
 
   onconnection(ws: WebSocket) {
@@ -50,9 +50,9 @@ export class Http extends Core implements SimpleIO {
     })
   }
 
-  onmessage(message: any) {
-    console.debug('>>onmessage')
-    const serialized = JSON.stringify(message)
+  onevent(event: any) {
+    console.debug('>>onevent')
+    const serialized = JSON.stringify(event)
     this.wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) client.send(serialized)
     })
@@ -73,14 +73,14 @@ export class Http extends Core implements SimpleIO {
     // Response
     const accept = req.headers.accept
     if (accept && ['application/json', 'application/*', '*/*'].some((v) => accept.startsWith(v))) {
-      const listener = this.#io.on((event) => {
+      const listener = this.#events.on((event) => {
         if (!(typeof event === 'object' && event.request === id && 'result' in event)) return
-        this.#io.off(listener)
+        this.#events.off(listener)
         clearTimeout(timeout)
         res.writeHead(200).end(JSON.stringify(event))
       })
       const timeout = setTimeout(() => {
-        this.#io.off(listener)
+        this.#events.off(listener)
         res.writeHead(202).end()
       }, 5000)
     }

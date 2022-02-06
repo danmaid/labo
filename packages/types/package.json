@@ -2,8 +2,8 @@
   "name": "types",
   "version": "0.0.1",
   "description": "",
-  "main": "",
-  "types": "index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "devDependencies": {
     "typescript": "^4.5.5"
   },
