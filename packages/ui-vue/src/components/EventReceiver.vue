@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <div v-for="event of events">{{ event }}</div>
-  </div>
+  <slot :events="events">
+    <div>
+      <div v-for="event of events">{{ event }}</div>
+    </div>
+  </slot>
 </template>
 
 <script lang="ts">
