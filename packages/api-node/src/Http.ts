@@ -71,13 +71,13 @@ export class Http extends Core implements SimpleIO {
     const id = uuid()
     const { httpVersion, method, url, headers } = req
     // Response
-    const accept = req.headers.accept
-    if (accept && ['application/json', 'application/*', '*/*'].some((v) => accept.startsWith(v))) {
+    const accept = req.headers.accept?.split(',').map((v) => v.trim()) || []
+    if (['application/json', 'application/*', '*/*'].some((expected) => accept.some((v) => v.startsWith(expected)))) {
       const listener = this.#events.on((event) => {
-        if (!(typeof event === 'object' && event.request === id && 'result' in event)) return
+        if (!(typeof event === 'object' && event.request === id && 'response' in event)) return
         this.#events.off(listener)
         clearTimeout(timeout)
-        res.writeHead(200).end(JSON.stringify(event))
+        res.writeHead(200).end(event.response)
       })
       const timeout = setTimeout(() => {
         this.#events.off(listener)

@@ -1,4 +1,4 @@
-import core from './core'
+import core from './Core'
 import { v4 as uuid } from 'uuid'
 
 export class TimeoutError extends Error { name = 'TimeoutError' }
