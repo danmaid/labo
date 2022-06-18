@@ -1,0 +1,27 @@
+{
+  "name": "history-chrome",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danmaid/labo.git"
+  },
+  "author": "danmaid",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danmaid/labo/issues"
+  },
+  "homepage": "https://github.com/danmaid/labo#readme",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/chrome": "^0.0.190"
+  }
+}

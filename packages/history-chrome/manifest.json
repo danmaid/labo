@@ -1,0 +1,10 @@
+{
+  "name": "History Maid",
+  "description": "upload history",
+  "version": "0.0.1",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "lib/background.js"
+  },
+  "permissions": ["history"]
+}
