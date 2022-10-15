@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Todo List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="stub.js" type="module"></script>
   </head>
 
@@ -20,11 +21,7 @@
     </table>
 
     <hr />
-    <form
-      name="add-form"
-      style="display: flex"
-      onsubmit="add(this); return false"
-    >
+    <form name="add-form" style="display: flex" onsubmit="add(this); return false">
       <textarea id="title" style="flex: 1 1"></textarea>
       <input type="submit" value="add" />
     </form>
