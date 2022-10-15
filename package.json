@@ -6,6 +6,11 @@
     "./packages/*"
   ],
   "devDependencies": {
-    "axios": "^0.24.0"
+    "http-server": "^14.1.1",
+    "typescript": "^4.8.4"
+  },
+  "scripts": {
+    "build": "tsc",
+    "serve": "http-server design"
   }
 }
