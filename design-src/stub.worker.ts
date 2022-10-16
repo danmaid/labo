@@ -125,7 +125,7 @@ sw.addEventListener('fetch', (ev) => {
               req.onerror = () => reject(req.error)
             })
             const headers = { 'Content-Type': 'application/json' }
-            return new Response(JSON.stringify(todos), { headers })
+            return new Response(JSON.stringify(todos), { headers, statusText: 'OK' })
           })()
         )
       } else if (req.method === 'POST') {
