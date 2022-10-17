@@ -24,6 +24,7 @@
         <tr>
           <th colspan="4">Request</th>
           <th colspan="4">Response</th>
+          <th>Event</th>
           <th>Result</th>
         </tr>
         <tr>
@@ -35,6 +36,7 @@
           <th>statusText</th>
           <th>headers</th>
           <th>body</th>
+          <th>event</th>
           <th>expected</th>
         </tr>
       </thead>
@@ -49,6 +51,7 @@
             <td id="status-text"></td>
             <td><pre id="headers"></pre></td>
             <td><pre id="body" style="max-height: 100px; overflow-y: auto"></pre></td>
+            <td><pre id="event"></pre></td>
             <td>
               <div id="expected" style="display: grid; grid-template-columns: max-content 1fr"></div>
             </td>
@@ -122,7 +125,37 @@
         return data
       }
 
+      function renderSSE(src) {
+        const state = {
+          [EventSource.CLOSED]: 'CLOSED',
+          [EventSource.CONNECTING]: 'CONNECTING',
+          [EventSource.OPEN]: 'OPEN',
+        }
+        const { request, response } = addRow()
+        request.method.textContent = 'SSE'
+        request.url.textContent = src.url
+        response.status.textContent = src.readyState
+        response.statusText.textContent = state[src.readyState]
+      }
+
       async function run() {
+        const { src } = (function () {
+          const events = []
+          const src = new EventSource('/todos')
+
+          src.onmessage = (ev) => {
+            events.push(ev.data)
+            const div = document.createElement('div')
+            div.textContent = JSON.stringify(JSON.parse(ev.data), null, 2)
+            const parents = document.querySelectorAll('#event')
+            parents[parents.length - 1].append(div)
+          }
+          src.onopen = () => renderSSE(src)
+          renderSSE(src)
+
+          return { events, src }
+        })()
+
         await testRR(new Request('/todos'), [
           ['status === 200', (req, res) => res.status === 200],
           ['Content-Type === application/json', (req, res) => res.headers.get('Content-Type') === 'application/json'],
@@ -156,6 +189,9 @@
           [`contain(${created})`, (req, res, data) => data.some((v) => v.id === created)],
         ])
         await new Promise((r) => setTimeout(r, 1000))
+
+        src.close()
+        renderSSE(src)
       }
 
       this.onload = run
