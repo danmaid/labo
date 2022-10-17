@@ -27,3 +27,4 @@ design/*
 !design/index.html
 !design/detail.html
 !design/api.spec.html
+!design/api.scenario.html
